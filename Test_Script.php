@@ -26,11 +26,15 @@ if (debug = 1) {
 /* Below line can be uncommented for debugging file formatting issues that will affect splitting of values.
 print_r(list($hostnames, $LocNames, $Address) = explode(" ", $file, 3));
 */
+foreach ($hostnames as $key => $value) {
+	$query = sprintf("SELECT id from object_def WHERE instance='node' and name='%s', mysql_real_escape_string($value)"));
+}
+$ObjDefIDs = mysql_query($query);
 
-
-C:\Program Files (x86)\JetBrains\PhpStorm 2016.3.1\bin
-
-
+if (!$ObjDefIDs) {
+	$message = 'This Device Does Not Exist Yet!' . mysql_error() . "\n";
+	die($message);
+}
 //open file and split the contents into 3 arrays
 
 //First array is the hostnames
