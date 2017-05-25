@@ -2,7 +2,18 @@
 
 #This is my first ever PHP script written totally by myself!!!
 #Hope it all goes well.....and it works
+$debug = '0';
 
+//Connect to MySQL database
+try {
+	$dsn = 'mysql:host=localhost;dbname=CaseSentry';
+	$dbh = new PDO($dsn, 'root', '');
+	$dbh->setAttribute(PDO::ATTR_EMULATE_PREPARES, TRUE);
+	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
+	//Change to ERRMODE_SILENT for a quieter script
+} catch (PDOException $e) {
+	echo 'Failed: ' . $e->getMessage();
+}
 
 // Script Options, -f (file) required -h (help) optional -d (debug) optonal
 $Options = getopt("f:hd");
@@ -27,10 +38,37 @@ if (debug = 1) {
 print_r(list($hostnames, $LocNames, $Address) = explode(" ", $file, 3));
 */
 
+//Function gets gathers Object_def_id and puts it into an array to be used later in the script
+function subroutine($hostnames) {
 
-C:\Program Files (x86)\JetBrains\PhpStorm 2016.3.1\bin
+	foreach ($hostnames as $key => $value) {
+		$query = sprintf("SELECT id from object_def WHERE instance='node' and name='%s', mysql_real_escape_string($hostnames)");
+	}
+		$results = mysql_query($query);
 
+	while( $row = mysql_fetch_assoc($results)){
+    	$ObjDefIDs[] = $results; // Inside while loop
+	}
 
+	if (!$ObjDefIDs) {
+		$message = 'Device '$hostnames' .  Does Not Exist Yet!' . mysql_error() . "\n";
+	die($message);
+	}
+
+}
+
+function subroutine($LocNames) {
+
+	foreach ($LocNames as $key => $value) {
+		$query = sprintf("SELECT id, name from location where name='%s', mysql_real_escape_string($LocNames)");
+	}
+		$results = mysql_query($query);
+
+	while ($row = mysql_query($results)) {
+		$Loc_ID[$results['id']] = $row;
+		$Loc_Code[$results['name']] = $row;
+	}
+}
 //open file and split the contents into 3 arrays
 
 //First array is the hostnames
